@@ -1,0 +1,157 @@
+/* ===== Theme colors ===== */
+
+/* Dark theme (based on VS Code Dark Modern) */
+:root,
+:root[data-theme="dark"] {
+    --bg: #1f1f1f;
+    --sidebar: #181818;
+    --surface: #181818;
+    --hover: #2a2d2e;
+    --active: #37373d;
+    --border: #2b2b2b;
+    --text: #cccccc;
+    --muted: #9d9d9d;
+    --accent: #e06c75;
+}
+
+/* Light theme when the device is in light mode (unless the user chose dark) */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        --bg: #ffffff;
+        --sidebar: #f8f8f8;
+        --surface: #f8f8f8;
+        --hover: #f2f2f2;
+        --active: #e4e6f1;
+        --border: #e5e5e5;
+        --text: #3b3b3b;
+        --muted: #616161;
+        --accent: #c94f5a;
+    }
+}
+
+/* Light theme when the user chooses it with the button */
+:root[data-theme="light"] {
+    --bg: #ffffff;
+    --sidebar: #f8f8f8;
+    --surface: #f8f8f8;
+    --hover: #f2f2f2;
+    --active: #e4e6f1;
+    --border: #e5e5e5;
+    --text: #3b3b3b;
+    --muted: #616161;
+    --accent: #c94f5a;
+}
+
+/* ===== Page layout ===== */
+
+body {
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* ===== Sidebar ===== */
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+}
+
+.sidebar h1 {
+    margin: 0 0 28px 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+nav a {
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+nav a:hover {
+    background: var(--hover);
+    color: var(--text);
+}
+
+nav a.active {
+    background: var(--active);
+    color: var(--text);
+    box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.theme-toggle {
+    margin-top: auto;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    background: var(--hover);
+}
+
+/* ===== Main content ===== */
+
+main {
+    flex: 1;
+    max-width: 1100px;
+    padding: 28px 36px;
+}
+
+section {
+    margin-bottom: 20px;
+    padding: 18px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+h2 {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+h3 {
+    margin: 14px 0 6px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+
+p {
+    color: var(--muted);
+}
+
+/* Use class="mono" on times and dates later */
+.mono {
+    font-family: "JetBrains Mono", monospace;
+}
