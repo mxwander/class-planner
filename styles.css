@@ -155,3 +155,202 @@ p {
 .mono {
     font-family: "JetBrains Mono", monospace;
 }
+
+/* ===== Native controls (date/time pickers) match the theme ===== */
+
+:root,
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        color-scheme: light;
+    }
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+/* ===== Edit page: 2 x 2 grid ===== */
+
+.edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.edit-grid section {
+    margin-bottom: 0;
+}
+
+.saved-list {
+    min-height: 280px;
+}
+
+.danger-zone {
+    margin-top: 20px;
+}
+
+/* ===== Forms ===== */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.field[hidden] {
+    display: none;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.req {
+    color: var(--accent);
+}
+
+input,
+select,
+textarea {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 8px 10px;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+input[type="time"],
+input[type="date"] {
+    font-family: "JetBrains Mono", monospace;
+}
+
+input[type="color"] {
+    width: 60px;
+    height: 36px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* ===== Meeting time box ===== */
+
+#meetings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+fieldset.meeting {
+    margin: 0;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+legend {
+    padding: 0 6px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+}
+
+.days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.days label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.days label:has(input:checked) {
+    color: var(--text);
+    background: var(--active);
+    border-color: var(--accent);
+}
+
+input[type="checkbox"] {
+    accent-color: var(--accent);
+}
+
+/* ===== Buttons ===== */
+
+.btn {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    color: #ffffff;
+    background: var(--accent);
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+.btn-secondary {
+    color: var(--text);
+    background: transparent;
+    border-color: var(--border);
+}
+
+.btn-secondary:hover {
+    background: var(--hover);
+}
+
+.btn-danger {
+    color: var(--accent);
+    background: transparent;
+    border-color: var(--accent);
+}
+
+.btn-danger:hover {
+    color: #ffffff;
+    background: var(--accent);
+}
