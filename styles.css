@@ -42,6 +42,27 @@
     --accent: #c94f5a;
 }
 
+/* Status colors */
+:root {
+    --success: #4caf50;
+}
+
+/* Native controls (date/time pickers) match the theme */
+:root,
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        color-scheme: light;
+    }
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
 /* ===== Page layout ===== */
 
 body {
@@ -151,26 +172,9 @@ p {
     color: var(--muted);
 }
 
-/* Use class="mono" on times and dates later */
+/* Use class="mono" on times and dates */
 .mono {
     font-family: "JetBrains Mono", monospace;
-}
-
-/* ===== Native controls (date/time pickers) match the theme ===== */
-
-:root,
-:root[data-theme="dark"] {
-    color-scheme: dark;
-}
-
-@media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-        color-scheme: light;
-    }
-}
-
-:root[data-theme="light"] {
-    color-scheme: light;
 }
 
 /* ===== Edit page: 2 x 2 grid ===== */
@@ -261,7 +265,7 @@ textarea {
 
 /* ===== Meeting time box ===== */
 
-#meetings {
+.meetings {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -314,6 +318,10 @@ input[type="checkbox"] {
     accent-color: var(--accent);
 }
 
+.remove-meeting {
+    align-self: flex-start;
+}
+
 /* ===== Buttons ===== */
 
 .btn {
@@ -355,12 +363,6 @@ input[type="checkbox"] {
     background: var(--accent);
 }
 
-/* ===== Status colors ===== */
-
-:root {
-    --success: #4caf50;
-}
-
 /* ===== Pop-up message (toast) ===== */
 
 .toast {
@@ -397,6 +399,121 @@ input[type="checkbox"] {
     to { opacity: 0; transform: translate(-50%, -10px); }
 }
 
-.remove-meeting {
-    align-self: flex-start;
+/* ===== Saved lists ===== */
+
+.item-list {
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 4px;
+}
+
+.item:hover {
+    background: var(--hover);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.item-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item-title {
+    font-weight: 500;
+}
+
+.item-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.item-sub.mono {
+    font-size: 0.75rem;
+}
+
+.item-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-small {
+    font: inherit;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    color: var(--text);
+    background: var(--active);
+}
+
+.btn-small[data-action="delete"]:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group-title .dot {
+    width: 8px;
+    height: 8px;
+}
+
+/* ===== Pop-up windows ===== */
+
+.modal {
+    width: min(560px, 90vw);
+    max-height: 85vh;
+    padding: 22px 24px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.modal-small {
+    width: min(400px, 90vw);
+}
+
+.modal p {
+    color: var(--text);
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
 }

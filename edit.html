@@ -29,28 +29,28 @@
                     <h2>Add a Class</h2>
                     <form id="class-form">
                         <label class="field">Course code <span class="req">*</span>
-                            <input type="text" id="class-code" placeholder="e.g., MA 241" required>
+                            <input type="text" name="code" placeholder="e.g., MA 241" required>
                         </label>
 
                         <div class="field-row">
                             <label class="field">Course title
-                                <input type="text" id="class-title" placeholder="e.g., Calculus II">
+                                <input type="text" name="title" placeholder="e.g., Calculus II">
                             </label>
                             <label class="field">Instructor
-                                <input type="text" id="class-instructor" placeholder="e.g., Dr. Smith">
+                                <input type="text" name="instructor" placeholder="e.g., Dr. Smith">
                             </label>
                         </div>
 
                         <div class="field-row">
                             <label class="field">Location
-                                <input type="text" id="class-location" placeholder="e.g., SAS Hall 1102">
+                                <input type="text" name="location" placeholder="e.g., SAS Hall 1102">
                             </label>
                             <label class="field">Color
-                                <input type="color" id="class-color" value="#e06c75">
+                                <input type="color" name="color" value="#e06c75">
                             </label>
                         </div>
 
-                        <div id="meetings">
+                        <div class="meetings">
                             <fieldset class="meeting">
                                 <legend>Meeting time</legend>
                                 <div class="field-row">
@@ -81,7 +81,7 @@
                             </fieldset>
                         </div>
 
-                        <button type="button" id="add-meeting" class="btn btn-secondary">+ Add meeting time</button>
+                        <button type="button" class="btn btn-secondary add-meeting">+ Add meeting time</button>
                         <button type="submit" class="btn btn-primary">Save Class</button>
                     </form>
                 </section>
@@ -91,12 +91,12 @@
                     <h2>Add a Task</h2>
                     <form id="task-form">
                         <label class="field">Task name <span class="req">*</span>
-                            <input type="text" id="task-name" placeholder="e.g., Homework 7" required>
+                            <input type="text" name="name" placeholder="e.g., Homework 7" required>
                         </label>
 
                         <div class="field-row">
                             <label class="field">Type <span class="req">*</span>
-                                <select id="task-type" required>
+                                <select name="type" required>
                                     <option value="">Choose a type</option>
                                     <option>Assignment / Homework</option>
                                     <option>Exam</option>
@@ -107,34 +107,34 @@
                                 </select>
                             </label>
                             <label class="field">Class
-                                <select id="task-class">
+                                <select name="classId">
                                     <option value="">None</option>
                                 </select>
                             </label>
                         </div>
 
-                        <label class="field" id="task-other-field" hidden>Type name <span class="req">*</span>
-                            <input type="text" id="task-other-type" placeholder="e.g., Reading">
+                        <label class="field other-field" hidden>Type name <span class="req">*</span>
+                            <input type="text" name="otherType" placeholder="e.g., Reading">
                         </label>
 
                         <div class="field-row">
                             <label class="field">Due date <span class="req">*</span>
-                                <input type="date" id="task-date" required>
+                                <input type="date" name="dueDate" required>
                             </label>
                             <label class="field">Due time <span class="req">*</span>
-                                <input type="time" id="task-time" value="23:59" required>
+                                <input type="time" name="dueTime" value="23:59" required>
                             </label>
                         </div>
 
                         <div class="field-row">
                             <label class="field">Est. hours
-                                <input type="number" id="task-hours" min="0" placeholder="0">
+                                <input type="number" name="hours" min="0" placeholder="0">
                             </label>
                             <label class="field">Est. minutes
-                                <input type="number" id="task-minutes" min="0" max="59" step="5" placeholder="0">
+                                <input type="number" name="minutes" min="0" max="59" step="5" placeholder="0">
                             </label>
                             <label class="field">Priority
-                                <select id="task-priority">
+                                <select name="priority">
                                     <option value="">None</option>
                                     <option>Low</option>
                                     <option>Medium</option>
@@ -144,7 +144,7 @@
                         </div>
 
                         <label class="field">Notes
-                            <textarea id="task-notes" placeholder="Details, instructions, links..."></textarea>
+                            <textarea name="notes" placeholder="Details, instructions, links..."></textarea>
                         </label>
 
                         <button type="submit" class="btn btn-primary">Save Task</button>
@@ -154,13 +154,13 @@
                 <!-- Bottom left: Saved Classes -->
                 <section id="saved-classes" class="saved-list">
                     <h2>Saved Classes</h2>
-                    <p>No classes saved yet.</p>
+                    <div id="class-list"></div>
                 </section>
 
                 <!-- Bottom right: Saved Tasks -->
                 <section id="saved-tasks" class="saved-list">
                     <h2>Saved Tasks</h2>
-                    <p>No tasks saved yet.</p>
+                    <div id="task-list"></div>
                 </section>
 
             </div>
@@ -169,6 +169,19 @@
                 <button type="button" id="clear-all" class="btn btn-danger">Clear everything</button>
             </div>
         </main>
+
+        <!-- Pop-up for editing a class or task (filled in by edit.js) -->
+        <dialog id="edit-dialog" class="modal"></dialog>
+
+        <!-- Pop-up for "Are you sure?" questions -->
+        <dialog id="confirm-dialog" class="modal modal-small">
+            <p id="confirm-message"></p>
+            <div class="dialog-actions">
+                <button type="button" id="confirm-no" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="confirm-yes" class="btn btn-primary">Delete</button>
+            </div>
+        </dialog>
+
         <script src="storage.js"></script>
         <script src="edit.js"></script>
     </body>
