@@ -10,13 +10,18 @@ const confirmDialog = document.getElementById("confirm-dialog");
 const byCode = (a, b) => a.code.localeCompare(b.code);
 
 
-// ===== Small helper for building page elements =====
+// ===== Small helpers =====
 
 function el(tag, className, text) {
     const element = document.createElement(tag);
     if (className) element.className = className;
     if (text !== undefined) element.textContent = text;
     return element;
+}
+
+// plural(1, "task") -> "1 task", plural(3, "class", "classes") -> "3 classes"
+function plural(count, word, pluralWord = word + "s") {
+    return `${count} ${count === 1 ? word : pluralWord}`;
 }
 
 
@@ -154,6 +159,75 @@ function fillTaskForm(form, task) {
 }
 
 
+// ===== Select mode (for deleting several items at once) =====
+
+const selectMode = { class: false, task: false };      // Is each list in select mode?
+const selected = { class: new Set(), task: new Set() }; // IDs of checked items
+const visibleIds = { class: [], task: [] };             // IDs currently shown in each list
+
+function addSelectBox(row, kind, id) {
+    const box = el("input", "select-box");
+    box.type = "checkbox";
+    box.dataset.kind = kind;
+    box.dataset.id = id;
+    box.checked = selected[kind].has(id);
+
+    row.classList.add("selectable");
+    row.classList.toggle("selected", box.checked);
+    row.append(box);
+}
+
+function makeControl(select, text, extraClass) {
+    const button = el("button", extraClass ? `btn-small ${extraClass}` : "btn-small", text);
+    button.type = "button";
+    button.dataset.select = select;
+    return button;
+}
+
+// The buttons in each list's header: Select, or Select all / Delete N / Done
+function renderControls(kind) {
+    const box = document.querySelector(`.list-controls[data-kind="${kind}"]`);
+    box.innerHTML = "";
+    const ids = visibleIds[kind];
+
+    if (!selectMode[kind]) {
+        if (ids.length > 0) box.append(makeControl("start", "Select"));
+        return;
+    }
+
+    const allSelected = ids.length > 0 && ids.every(id => selected[kind].has(id));
+    const deleteButton = makeControl("delete", `Delete ${selected[kind].size}`, "btn-small-danger");
+    deleteButton.disabled = selected[kind].size === 0;
+
+    box.append(
+        makeControl("all", allSelected ? "Deselect all" : "Select all"),
+        deleteButton,
+        makeControl("done", "Done"),
+    );
+}
+
+function rememberVisible(kind, ids) {
+    visibleIds[kind] = ids;
+    // Forget selections for items that are no longer shown (for example, deleted)
+    for (const id of selected[kind]) {
+        if (!ids.includes(id)) selected[kind].delete(id);
+    }
+}
+
+function exitSelectMode(kind) {
+    selectMode[kind] = false;
+    selected[kind].clear();
+}
+
+function renderList(kind) {
+    if (kind === "class") {
+        renderClasses();
+    } else {
+        renderTasks();
+    }
+}
+
+
 // ===== Show the saved lists =====
 
 function makeActions(kind, id) {
@@ -174,6 +248,9 @@ function renderClasses() {
     box.innerHTML = "";
 
     const classes = loadData(CLASSES_KEY).sort(byCode);
+    rememberVisible("class", classes.map(c => c.id));
+    renderControls("class");
+
     if (classes.length === 0) {
         box.append(el("p", null, "No classes saved yet."));
         return;
@@ -182,6 +259,7 @@ function renderClasses() {
     const list = el("ul", "item-list");
     for (const savedClass of classes) {
         const row = el("li", "item");
+        if (selectMode.class) addSelectBox(row, "class", savedClass.id);
 
         const dot = el("span", "dot");
         dot.style.background = savedClass.color;
@@ -192,7 +270,8 @@ function renderClasses() {
             info.append(el("span", "item-sub", savedClass.title));
         }
 
-        row.append(dot, info, makeActions("class", savedClass.id));
+        row.append(dot, info);
+        if (!selectMode.class) row.append(makeActions("class", savedClass.id));
         list.append(row);
     }
     box.append(list);
@@ -207,6 +286,9 @@ function renderTasks() {
     const tasks = loadData(TASKS_KEY)
         .filter(task => !isTaskFinished(task))
         .sort((a, b) => taskDueDate(a) - taskDueDate(b));
+
+    rememberVisible("task", tasks.map(t => t.id));
+    renderControls("task");
 
     if (tasks.length === 0) {
         box.append(el("p", null, "No tasks saved yet."));
@@ -236,10 +318,14 @@ function renderTasks() {
         const list = el("ul", "item-list");
         for (const task of groupTasks) {
             const row = el("li", "item");
+            if (selectMode.task) addSelectBox(row, "task", task.id);
+
             const info = el("div", "item-info");
             info.append(el("span", "item-title", task.name));
             info.append(el("span", "item-sub mono", `${taskTypeLabel(task)} · Due ${formatDue(task)}`));
-            row.append(info, makeActions("task", task.id));
+
+            row.append(info);
+            if (!selectMode.task) row.append(makeActions("task", task.id));
             list.append(row);
         }
         box.append(list);
@@ -331,29 +417,36 @@ function openEditor(kind, id) {
 }
 
 
-// ===== Delete =====
+// ===== Delete (one item or several selected items) =====
 
-function deleteItem(kind, id) {
+function deleteItems(kind, ids) {
     if (kind === "class") {
-        const savedClass = loadData(CLASSES_KEY).find(c => c.id === id);
-        const linkedCount = loadData(TASKS_KEY).filter(t => t.classId === id).length;
+        const classes = loadData(CLASSES_KEY);
+        const linkedCount = loadData(TASKS_KEY).filter(t => ids.includes(t.classId)).length;
 
-        let message = `Delete ${savedClass.code}?`;
+        let message = ids.length === 1
+            ? `Delete ${classes.find(c => c.id === ids[0]).code}?`
+            : `Delete ${plural(ids.length, "class", "classes")}?`;
         if (linkedCount > 0) {
-            message += ` This will also delete ${linkedCount} linked task${linkedCount === 1 ? "" : "s"}.`;
+            message += ` This will also delete ${plural(linkedCount, "linked task")}.`;
         }
 
         askConfirm(message, () => {
-            saveData(CLASSES_KEY, loadData(CLASSES_KEY).filter(c => c.id !== id));
-            saveData(TASKS_KEY, loadData(TASKS_KEY).filter(t => t.classId !== id));
+            saveData(CLASSES_KEY, loadData(CLASSES_KEY).filter(c => !ids.includes(c.id)));
+            saveData(TASKS_KEY, loadData(TASKS_KEY).filter(t => !ids.includes(t.classId)));
+            exitSelectMode("class");
             refreshAll();
             showToast("Deleted.");
         });
     } else {
-        const task = loadData(TASKS_KEY).find(t => t.id === id);
+        const tasks = loadData(TASKS_KEY);
+        const message = ids.length === 1
+            ? `Delete "${tasks.find(t => t.id === ids[0]).name}"?`
+            : `Delete ${plural(ids.length, "task")}?`;
 
-        askConfirm(`Delete "${task.name}"?`, () => {
-            saveData(TASKS_KEY, loadData(TASKS_KEY).filter(t => t.id !== id));
+        askConfirm(message, () => {
+            saveData(TASKS_KEY, loadData(TASKS_KEY).filter(t => !ids.includes(t.id)));
+            exitSelectMode("task");
             refreshAll();
             showToast("Deleted.");
         });
@@ -361,18 +454,96 @@ function deleteItem(kind, id) {
 }
 
 
-// ===== Edit and Delete buttons in the saved lists =====
+// ===== Clicks inside the 2 x 2 grid =====
+
+function handleSelectControl(kind, action) {
+    if (action === "start") {
+        selectMode[kind] = true;
+    } else if (action === "done") {
+        exitSelectMode(kind);
+    } else if (action === "all") {
+        const ids = visibleIds[kind];
+        const allSelected = ids.every(id => selected[kind].has(id));
+        if (allSelected) {
+            selected[kind].clear();
+        } else {
+            ids.forEach(id => selected[kind].add(id));
+        }
+    } else if (action === "delete") {
+        deleteItems(kind, [...selected[kind]]);
+        return;
+    }
+    renderList(kind);
+}
+
+function toggleSelected(box) {
+    const { kind, id } = box.dataset;
+    if (box.checked) {
+        selected[kind].add(id);
+    } else {
+        selected[kind].delete(id);
+    }
+    box.closest(".item").classList.toggle("selected", box.checked);
+    renderControls(kind);
+}
 
 document.querySelector(".edit-grid").addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) return;
-
-    const { action, kind, id } = button.dataset;
-    if (action === "edit") {
-        openEditor(kind, id);
-    } else {
-        deleteItem(kind, id);
+    // Select / Select all / Delete N / Done
+    const control = event.target.closest("button[data-select]");
+    if (control) {
+        const kind = control.closest(".list-controls").dataset.kind;
+        handleSelectControl(kind, control.dataset.select);
+        return;
     }
+
+    // Edit / Delete on a single row
+    const button = event.target.closest("button[data-action]");
+    if (button) {
+        const { action, kind, id } = button.dataset;
+        if (action === "edit") {
+            openEditor(kind, id);
+        } else {
+            deleteItems(kind, [id]);
+        }
+        return;
+    }
+
+    // In select mode, clicking anywhere on a row checks or unchecks it
+    const row = event.target.closest(".item.selectable");
+    if (row) {
+        const box = row.querySelector(".select-box");
+        if (event.target !== box) box.checked = !box.checked;
+        toggleSelected(box);
+    }
+});
+
+
+// ===== Clear everything =====
+
+const clearDialog = document.getElementById("clear-dialog");
+const clearInput = document.getElementById("clear-input");
+const clearYes = document.getElementById("clear-yes");
+
+document.getElementById("clear-all").addEventListener("click", () => {
+    clearInput.value = "";
+    clearYes.disabled = true;
+    clearDialog.showModal();
+});
+
+clearInput.addEventListener("input", () => {
+    clearYes.disabled = clearInput.value !== "CLEAR";
+});
+
+document.getElementById("clear-no").addEventListener("click", () => clearDialog.close());
+
+clearYes.addEventListener("click", () => {
+    saveData(CLASSES_KEY, []);
+    saveData(TASKS_KEY, []);
+    exitSelectMode("class");
+    exitSelectMode("task");
+    clearDialog.close();
+    refreshAll();
+    showToast("Everything cleared.");
 });
 
 

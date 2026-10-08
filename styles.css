@@ -517,3 +517,61 @@ input[type="checkbox"] {
     justify-content: flex-end;
     gap: 8px;
 }
+
+/* ===== Select mode ===== */
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.list-header h2 {
+    margin: 0;
+}
+
+.list-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-small-danger {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-small-danger:hover {
+    color: #ffffff;
+    background: var(--accent);
+}
+
+.btn:disabled,
+.btn-small:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: none;
+}
+
+.btn-small:disabled:hover {
+    color: var(--accent);
+    background: transparent;
+}
+
+.item.selectable {
+    cursor: pointer;
+}
+
+.item.selected {
+    background: var(--active);
+}
+
+/* ===== Clear everything pop-up ===== */
+
+#clear-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    font-family: "JetBrains Mono", monospace;
+}

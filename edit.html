@@ -153,13 +153,19 @@
 
                 <!-- Bottom left: Saved Classes -->
                 <section id="saved-classes" class="saved-list">
-                    <h2>Saved Classes</h2>
+                    <div class="list-header">
+                        <h2>Saved Classes</h2>
+                        <div class="list-controls" data-kind="class"></div>
+                    </div>
                     <div id="class-list"></div>
                 </section>
 
                 <!-- Bottom right: Saved Tasks -->
                 <section id="saved-tasks" class="saved-list">
-                    <h2>Saved Tasks</h2>
+                    <div class="list-header">
+                        <h2>Saved Tasks</h2>
+                        <div class="list-controls" data-kind="task"></div>
+                    </div>
                     <div id="task-list"></div>
                 </section>
 
@@ -179,6 +185,17 @@
             <div class="dialog-actions">
                 <button type="button" id="confirm-no" class="btn btn-secondary">Cancel</button>
                 <button type="button" id="confirm-yes" class="btn btn-primary">Delete</button>
+            </div>
+        </dialog>
+
+        <!-- Pop-up for "Clear everything" (must type CLEAR) -->
+        <dialog id="clear-dialog" class="modal modal-small">
+            <h2>Clear everything?</h2>
+            <p>This permanently deletes all of your classes and tasks. Type <strong class="mono">CLEAR</strong> to confirm.</p>
+            <input type="text" id="clear-input" autocomplete="off" placeholder="CLEAR">
+            <div class="dialog-actions">
+                <button type="button" id="clear-no" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="clear-yes" class="btn btn-primary" disabled>Clear everything</button>
             </div>
         </dialog>
 
