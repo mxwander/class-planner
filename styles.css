@@ -575,3 +575,120 @@ input[type="checkbox"] {
     margin-bottom: 16px;
     font-family: "JetBrains Mono", monospace;
 }
+
+
+/* ===== Task status colors ===== */
+
+:root {
+    --danger: #e5534b;
+    --warning: #e0a030;
+}
+
+/* ===== To-Do checklist ===== */
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.todo-item:hover {
+    box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.todo-item.status-overdue {
+    background: color-mix(in srgb, var(--danger) 16%, transparent);
+}
+
+.todo-item.status-done {
+    background: color-mix(in srgb, var(--success) 14%, transparent);
+}
+
+.todo-item.status-late {
+    background: color-mix(in srgb, var(--warning) 16%, transparent);
+}
+
+.todo-check {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.status-done .todo-check,
+.status-late .todo-check {
+    accent-color: var(--success);
+}
+
+.todo-class {
+    font-weight: 400;
+    color: var(--muted);
+}
+
+/* Small priority tag on the right */
+.priority {
+    flex-shrink: 0;
+    padding: 2px 8px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+}
+
+.priority-high {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.priority-medium {
+    color: var(--warning);
+    border-color: var(--warning);
+}
+
+/* ===== Task details pop-up ===== */
+
+.details-class {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: -6px 0 16px;
+    color: var(--muted);
+}
+
+.details-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    margin: 0 0 20px;
+}
+
+.details-list dt {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding-top: 2px;
+}
+
+.details-list dd {
+    margin: 0;
+}
+
+.details-notes {
+    white-space: pre-wrap;
+}
+
+.status-text-overdue { color: var(--danger); }
+.status-text-done    { color: var(--success); }
+.status-text-late    { color: var(--warning); }
+
+a.btn {
+    display: inline-block;
+    text-decoration: none;
+}

@@ -584,3 +584,19 @@ taskForm.addEventListener("submit", (event) => {
 setupClassForm(classForm);
 setupTaskForm(taskForm);
 refreshAll();
+
+
+// If another page sent us here to edit a task (edit.html?editTask=ID&from=index.html),
+// open that task's editor right away, then go back to that page when it closes.
+const params = new URLSearchParams(window.location.search);
+const editTaskId = params.get("editTask");
+const returnTo = params.get("from");
+
+if (editTaskId && loadData(TASKS_KEY).some(t => t.id === editTaskId)) {
+    openEditor("task", editTaskId);
+    if (["index.html", "calendar.html"].includes(returnTo)) {
+        editDialog.addEventListener("close", () => {
+            window.location.href = returnTo;
+        }, { once: true });
+    }
+}

@@ -68,3 +68,50 @@ function isTaskFinished(task) {
     }
     return new Date() >= dropOff;
 }
+
+
+// Where a task stands right now:
+// "upcoming" (not done, not due yet), "overdue" (not done, past due),
+// "done" (completed on time), or "late" (completed after it was due)
+function taskStatus(task, now = new Date()) {
+    const due = taskDueDate(task);
+    if (!task.completed) {
+        return due < now ? "overdue" : "upcoming";
+    }
+    return new Date(task.completedAt) > due ? "late" : "done";
+}
+
+// Check off a task (done = true) or uncheck it (done = false)
+function setTaskCompleted(id, done) {
+    const tasks = loadData("tasks");
+    const task = tasks.find(t => t.id === id);
+    task.completed = done;
+    task.completedAt = done ? new Date().toISOString() : null;
+    saveData("tasks", tasks);
+}
+
+// 90 -> "1 hr 30 min", 120 -> "2 hr", 45 -> "45 min"
+function formatDuration(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    const parts = [];
+    if (hours > 0) parts.push(`${hours} hr`);
+    if (mins > 0) parts.push(`${mins} min`);
+    return parts.join(" ");
+}
+
+
+// ===== Page-building helpers =====
+
+// Create an element with an optional class and text: el("span", "dot")
+function el(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+}
+
+// plural(1, "task") -> "1 task", plural(3, "class", "classes") -> "3 classes"
+function plural(count, word, pluralWord = word + "s") {
+    return `${count} ${count === 1 ? word : pluralWord}`;
+}
